@@ -6,11 +6,10 @@ import qs from 'qs';
 
 vue.prototype.$qs = qs
 //修改默认的地址为http://192.168.1.47:5000
-axios.defaults.baseURL = "/";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // 创建axios实例
 const service = axios.create({
-  baseURL: axios.defaults.baseURL, // api的base_url  修改默认的地址为http://192.168.1.47:5000
+  baseURL: "/", // api的base_url  修改默认的地址为http://192.168.1.47:5000
   timeout: 5000,             // 请求超时时间
   headers:{
            "Access-Control-Allow-Origin":"*",

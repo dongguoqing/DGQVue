@@ -90,10 +90,12 @@ const permission = {
         let accessedRouters
         //循环获取的角色Roles 判断当前的角色的权限路由
         let isSuperManager = false;
-        for(var i=0;i<roles.length;i++){
-          if(roles[i].RoleName.indexOf("管理员"))
-          isSuperManager = true;
-        }
+        // for(var i=0;i<roles.length;i++){
+        //   if(roles[i].RoleName.indexOf("管理员"))
+        //   isSuperManager = true;
+        // }
+        if(roles.indexOf("超级管理员")>-1)
+           isSuperManager = true;
         if (isSuperManager) {
           accessedRouters = asyncRouterMap
         } else {

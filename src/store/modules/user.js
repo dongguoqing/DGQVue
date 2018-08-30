@@ -84,10 +84,10 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
           const data = response.data;
-          commit('SET_ROLES', data.Role);
-          commit('SET_NAME', data.Name);
+          commit('SET_ROLES', data.F_FullName);
+          commit('SET_NAME', data.F_RealName);
           commit('SET_AVATAR', "");
-          commit('SET_UID', data.Uid);
+          commit('SET_UID', data.Id);
           commit('SET_INTRODUCTION', "");
           resolve(response);
         }).catch(error => {

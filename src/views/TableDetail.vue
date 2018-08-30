@@ -153,8 +153,12 @@
 
             </div>
     </Modal>
+     <Spin size="large"  v-if="spinShow"></Spin>
   </div>
   
+
+
+
 </template>
 
 
@@ -186,6 +190,7 @@ import Cookies from 'js-cookie';
               }
             }
             return {
+                 spinShow:true,//设置是够显示spin加载中
                  totalCount:0,
                  currentPage:1,//当前页码
                  isEditOrAdd:0,//新增还是编辑
@@ -301,13 +306,13 @@ import Cookies from 'js-cookie';
                 video_result: [],
                 columns6: [
                     {
-                        title: '邮箱',
+                        title: '账户',
                         key: 'level',
                         render: (h, params) => {
                           let level='';
                             
                              return h('div', [
-                                 h('strong', params.row.email)
+                                 h('strong', params.row.F_Account)
                                ]);
                         },
                         filterMultiple: false,
@@ -320,7 +325,7 @@ import Cookies from 'js-cookie';
                         }
                     },
                     {
-                        title: '用户名',
+                        title: '姓名',
                          render: (h, params) => {
                              
                              return h('div', [
@@ -336,7 +341,7 @@ import Cookies from 'js-cookie';
                        
                     },
                      {
-                        title: '真实姓名',
+                        title: '性别',
                          render: (h, params) => {
                              
                              return h('div', [
@@ -346,7 +351,7 @@ import Cookies from 'js-cookie';
                        
                     }, 
                     {
-                        title:"身份",
+                        title:"手机",
                          render: (h, params) => {
                              
                              return h('div', [
@@ -373,11 +378,61 @@ import Cookies from 'js-cookie';
                         }
                     },
                     {
-                        title:'性别',
+                        title:'公司',
                         render:(h,params)=>{
                             return h('div',[h('strong',params.row.sex)])
                         },
                     },
+                     {
+                        title: '部门',
+                         render: (h, params) => {
+                             
+                             return h('div', [
+                                 h('strong', params.row.name)
+                               ]);
+                        },
+                       
+                    }, 
+                     {
+                        title: '岗位',
+                         render: (h, params) => {
+                             
+                             return h('div', [
+                                 h('strong', params.row.name)
+                               ]);
+                        },
+                       
+                    }, 
+                     {
+                        title: '创建时间',
+                         render: (h, params) => {
+                             
+                             return h('div', [
+                                 h('strong', params.row.name)
+                               ]);
+                        },
+                       
+                    }, 
+                     {
+                        title: '允许登录',
+                         render: (h, params) => {
+                             
+                             return h('div', [
+                                 h('strong', params.row.name)
+                               ]);
+                        },
+                       
+                    }, 
+                    {
+                        title: '备注',
+                         render: (h, params) => {
+                             
+                             return h('div', [
+                                 h('strong', params.row.name)
+                               ]);
+                        },
+                       
+                    }, 
                     {
                         title:"操作",
                         render:(h,params)=>{
@@ -423,8 +478,9 @@ import Cookies from 'js-cookie';
         created(){
             //获取用户列表
             getUserList(1,10).then(response=>{
-                var jsonData = response.data.resultData;
-                this.setPersonInformation(jsonData,response.data.totalCount)
+                this.spinShow = false;
+                var jsonData = response.data.Items;
+                this.setPersonInformation(jsonData,response.data.Count)
                // alert(this.video_result)
             });
         },
@@ -449,7 +505,8 @@ import Cookies from 'js-cookie';
                     var sex = "男";
                     if(jsonData[i].Sex==1)
                       sex = "女";
-                    this.video_result.push({id:jsonData[i].Id,email:jsonData[i].Email,username:jsonData[i].UserName,name:jsonData[i].Name,rolename:jsonData[i].RoleName,sex:sex})
+                    jsonData[i].Sex = sex;
+                    this.video_result = jsonData;
                 }
           },
           //读取用户信息
@@ -531,10 +588,12 @@ import Cookies from 'js-cookie';
           },
           //分页
           setInitPage(current){
+              this.spinShow = true;
               this.currentPage = current;
               getUserList(current,10).then(response=>{
-                var jsonData = response.data.resultData;
-                this.setPersonInformation(jsonData,response.data.totalCount)
+                this.spinShow = false
+                var jsonData = response.data.Items;
+                this.setPersonInformation(jsonData,response.data.Count)
               })
           }
         },
