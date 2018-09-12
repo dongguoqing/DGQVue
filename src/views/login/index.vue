@@ -30,11 +30,7 @@
       name: 'login',
       data() {
         const validateEmail = (rule, value, callback) => {
-          if (!isWscnEmail(value)) {
-            callback(new Error('请输入正确的合法邮箱'));
-          } else {
             callback();
-          }
         };
         const validatePass = (rule, value, callback) => {
           if (value.length < 6) {

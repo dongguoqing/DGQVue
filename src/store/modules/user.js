@@ -70,6 +70,7 @@ const user = {
           const data = response.data;
           Cookies.set('Admin-Token', response.data.Access_token);
           commit('SET_TOKEN', data.Access_token);
+          commit('SET_UID',data.Uid);
           commit('SET_EMAIL', response.data.Email);
           resolve();
         }).catch(error => {
@@ -82,7 +83,7 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
+        getInfo(state.uid).then(response => {
           const data = response.data;
           commit('SET_ROLES', data.F_FullName);
           commit('SET_NAME', data.F_RealName);

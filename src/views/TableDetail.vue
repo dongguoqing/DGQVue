@@ -335,39 +335,44 @@ import Cookies from 'js-cookie';
                                         cursor:"pointer",
                                     },
 
-                                  }, params.row.username)
+                                  }, params.row.F_RealName)
                                ]);
                         },
                        
                     },
                      {
                         title: '性别',
-                         render: (h, params) => {
-                             
+                        render: (h, params) => {
+                             let sex='';
+                             if(params.row.F_Gender)
+                                sex="男";
+                              else
+                                sex="女";
+
                              return h('div', [
-                                 h('strong', params.row.name)
+                                 h('strong', sex)
                                ]);
                         },
-                       
+                        
                     }, 
                     {
                         title:"手机",
                          render: (h, params) => {
                              
                              return h('div', [
-                                 h('strong', params.row.rolename)
+                                 h('strong', params.row.F_MobilePhone)
                                ]);
                         },
-                        filters: [
-                            {
-                                label: '大于0.90',
-                                value: 1
-                            },
-                            {
-                                label: '小于0.90',
-                                value: 2
-                            }
-                        ],
+                        // filters: [
+                        //     {
+                        //         label: '大于0.90',
+                        //         value: 1
+                        //     },
+                        //     {
+                        //         label: '小于0.90',
+                        //         value: 2
+                        //     }
+                        // ],
                         filterMultiple: false,
                         filterMethod (value, row) {
                             if (value === 1) {
@@ -501,13 +506,7 @@ import Cookies from 'js-cookie';
           setPersonInformation(jsonData,totalCount){
                 this.totalCount = totalCount;
                 this.video_result = []
-                for(var i=0;i<jsonData.length;i++){
-                    var sex = "男";
-                    if(jsonData[i].Sex==1)
-                      sex = "女";
-                    jsonData[i].Sex = sex;
-                    this.video_result = jsonData;
-                }
+                this.video_result = jsonData;
           },
           //读取用户信息
           readPersonInformation(id){

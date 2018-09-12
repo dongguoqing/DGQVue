@@ -21,13 +21,13 @@ export function logout() {
   });
 }
 
-export function getInfo(token) {
+export function getInfo(uid) {
   return fetch({
     url: '/LoginService/Login/GetInfo',
    // url: '/user/info',
     method: 'get',
    // headers:{access_token:token}
-    params: { token }
+    params: { uid }
   });
 }
 
