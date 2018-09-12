@@ -171,6 +171,7 @@
    
 <script>
 import {getUserList,getRoleList,getUserById,addUser,delUserById} from 'api/user';
+import {getOrganizeList} from 'api/organize';
 import Cookies from 'js-cookie';
 
     export default {
@@ -190,6 +191,9 @@ import Cookies from 'js-cookie';
               }
             }
             return {
+                 deptlist:[],//部门集合
+                 dutylist:[],//岗位集合
+                 companylist:[],//公司集合
                  spinShow:true,//设置是够显示spin加载中
                  totalCount:0,
                  currentPage:1,//当前页码
@@ -401,9 +405,10 @@ import Cookies from 'js-cookie';
                      {
                         title: '岗位',
                          render: (h, params) => {
-                             
+                             console.log(params.row.name)
+                             console.log(this_i.dutylist)
                              return h('div', [
-                                 h('strong', params.row.name)
+                                 h('strong', this_i.dutylist[params.row.F_RoleId].F_FullName)
                                ]);
                         },
                        
@@ -486,6 +491,12 @@ import Cookies from 'js-cookie';
                 this.spinShow = false;
                 var jsonData = response.data.Items;
                 this.setPersonInformation(jsonData,response.data.Count)
+                //获取部门集合
+               
+                //获取岗位集合
+                getOrganizeList().then(response=>{
+                    this.dutylist= response.data;
+                })
                // alert(this.video_result)
             });
         },

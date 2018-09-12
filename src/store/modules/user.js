@@ -7,7 +7,7 @@ const user = {
     status: '',
     email: '',
     code: '',
-    uid: undefined,
+    uid: Cookies.get('uid'),
     auth_type: '',
     token: Cookies.get('Admin-Token'),
     name: '',
@@ -68,6 +68,7 @@ const user = {
       return new Promise((resolve, reject) => {
         loginByEmail(email, userInfo.password).then(response => {
           const data = response.data;
+          Cookies.set('uid',data.Uid)
           Cookies.set('Admin-Token', response.data.Access_token);
           commit('SET_TOKEN', data.Access_token);
           commit('SET_UID',data.Uid);

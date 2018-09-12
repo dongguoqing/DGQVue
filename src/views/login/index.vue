@@ -41,7 +41,7 @@
         };
         return {
           loginForm: {
-            email: 'admin@wz.com',
+            email: 'admin',
             password: ''
           },
           loginRules: {
