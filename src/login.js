@@ -6,7 +6,8 @@ import 'nprogress/nprogress.css'// Progress 进度条样式
 
 // permissiom judge
 function hasPermission(roles, permissionRoles) {
-  if (roles.indexOf('admin') >= 0) return true // admin权限 直接通过
+  //alert(roles)
+  if (roles.indexOf('超级管理员') >= 0) return true // 超级管理员权限 直接通过
   if (!permissionRoles) return true
   return roles.some(role => permissionRoles.indexOf(role) >= 0)
 }

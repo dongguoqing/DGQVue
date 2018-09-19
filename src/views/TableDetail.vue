@@ -15,70 +15,12 @@
 
 
       </Col>
-       <!-- <Col span="6">
-            <Card>
-                <div v-if="is_video">
-                       <p slot="title" >视频名称:{{video_name}}</p>
-                    <p >上传时间:{{video_create_timestamp}}</p>
-                    <p>视频长度:{{video_duration}}</p>
-                    <p >文件大小: {{video_size}}</p>
-                    <p>识别结果</p>
-                   
-                   
-                    <i-circle
-                          :size="100"
-                          :trail-width="4"
-                          :stroke-width="5"
-                          :percent="sex_percent"
-                          stroke-linecap="square"
-                          stroke-color="#ff9900">
-                          <div class="demo-i-circle-custom">
-                              <h1>{{sex_count}}</h1>
-                              <p>性感镜头数</p>
-                              <span>
-                                  总占比
-                                  <i>{{sex_percent+"%"}}</i>
-                              </span>
-                          </div>
-                      </i-circle>
-                      <i-circle
-                          :size="100"
-                          :trail-width="4"
-                          :stroke-width="5"
-                          :percent="porn_percent"
-                          stroke-linecap="square"
-                          stroke-color="#ed3f14">
-                          <div class="demo-i-circle-custom">
-                              <h1>{{porn_count}}</h1>
-                              <p>涉黄镜头数</p>
-                              <span>
-                                  总占比
-                                  <i>{{porn_percent+"%"}}</i>
-                              </span>
-                          </div>
-                  </i-circle>
-                </div>
-
-
-
-                <div v-else-if="is_img">
-                  
-                  <p slot="title" >图片名称:{{video_name}}</p>
-                    <p >上传时间:{{video_create_timestamp}}</p>
-                    <p >文件大小: {{video_size}}</p>
-                    <p >识别结果</p>
-                <h3 style="margin-top:30px;text-align:center">  <strong >{{img_result}}</strong></h3>  
-                </div>
-               
-
-
-            </Card>
-       </Col> -->
+      
     </Row>
   
    <Button type="info" @click="addUser">新增</Button>
    <br/>
-    <Row v-if="is_video">   
+    <Row style="margin-top:10px">   
         <Col span="24">
  <Table border :columns="columns6" :data="video_result"  ></Table>
  <Page :total="this.totalCount" :pagegroup="10"  @on-change="setInitPage($event)" style="text-align:right;margin-top:50px"></Page>
@@ -88,70 +30,112 @@
 
     <Modal
         v-model="modal1"
-        title="普通的Modal对话框标题"
-       
-        @on-cancel="cancel">
-           <div style="" class="doc-header">
+        title="用户" 
+        @on-cancel="cancel" @on-ok="saveUser('formItem')">
+      
+                 <div style="" class="doc-header">
                       <Form  ref="formItem" :model="formItem" :label-width="80" :rules="ruleInline">
+          
+        <Form-item label="账户" prop="account">
+            <Input v-model="formItem.account" placeholder="请输入"></Input>
+        </Form-item>
+
+        <Form-item label="密码" prop="password">
+            <Input v-model="formItem.password" :disabled="currentRole!='超级管理员'"  type="password" placeholder="请输入"></Input>
+        </Form-item>
+
+         <Form-item label="手机号" prop="phone">
+            <Input v-model="formItem.phone" placeholder="请输入"></Input>
+        </Form-item>
+
         <Form-item label="邮箱" prop="email">
             <Input v-model="formItem.email" placeholder="请输入"></Input>
         </Form-item>
+
          <Form-item label="用户名" prop="username">
             <Input v-model="formItem.username" placeholder="请输入"></Input>
         </Form-item>
+
          <Form-item label="真实姓名" prop="name">
             <Input v-model="formItem.name" placeholder="请输入"></Input>
         </Form-item>
-         <Form-item label="角色">
-            <Radio-group v-model="formItem.role">
-                <Radio  :key="role.Id" :label="role.Id" v-for="role in roles">{{role.RoleName}}</Radio>
-                <!-- <Radio label="female">普通用户</Radio> -->
-            </Radio-group>
-        </Form-item>
-        <!-- <Form-item label="选择器">
-            <Select v-model="formItem.select" placeholder="请选择">
-                <Option value="beijing">北京市</Option>
-                <Option value="shanghai">上海市</Option>
-                <Option value="shenzhen">深圳市</Option>
-            </Select>
-        </Form-item>
-        <Form-item label="日期控件">
-                    <Date-picker type="date" placeholder="选择日期" v-model="formItem.date"></Date-picker>
-                    <Time-picker type="time" placeholder="选择时间" v-model="formItem.time"></Time-picker>
-        </Form-item> -->
-        <Form-item label="单选框">
+
+        <!-- <Select style="diwth:200px">
+            <Option>
+            </Option>
+        </Select> -->
+
+         <FormItem label="角色">
+            <Dropdown trigger="click" @on-click="chooseRole">
+                <Button style="background-color:white;width:200px">
+                    {{rolename}}
+                    <Icon type="arrow-down-b">
+                    </Icon>
+                </Button>
+                <DropdownMenu slot="list">
+                    <DropdownItem :name="drop.F_Id" v-for="drop in rolelist" :value="drop.F_Id" :key="drop.F_Id">
+                        {{drop.F_FullName}}
+                    </DropdownItem>
+                    
+                </DropdownMenu>
+                
+            </Dropdown>
+        </FormItem>
+
+         <FormItem label="公司">
+            <Dropdown trigger="click" @on-click="chooseCompany">
+                <Button  style="background-color:white;width:200px">
+                   {{companyname}}
+                    <Icon type="arrow-down-b">
+                    </Icon>
+                </Button>
+                <DropdownMenu slot="list">
+                    <DropdownItem :name="company.F_Id" v-for="company in companylist" :value="company.F_Id" :key="company.F_Id">
+                        {{company.F_FullName}}
+                    </DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+        </FormItem>
+
+        <FormItem label="部门">
+            <Dropdown trigger="click"  @on-click="chooseDept">
+                <Button  style="background-color:white;width:200px">
+                    {{deptname}}
+                    <Icon type="arrow-down-b">
+                    </Icon>
+                </Button>
+                <DropdownMenu slot="list">
+                    <DropdownItem :name="dept.F_Id" v-for="dept in deptlist" :value="dept.F_Id" :key="dept.F_Id">
+                        {{dept.F_FullName}}
+                    </DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+        </FormItem>
+      
+        <Form-item label="性别">
             <Radio-group v-model="formItem.sex">
                 <Radio label="0">男</Radio>
                 <Radio label="1">女</Radio>
             </Radio-group>
         </Form-item>
-        <!-- <Form-item label="多选框">
-            <Checkbox-group v-model="formItem.checkbox">
-                <Checkbox label="吃饭"></Checkbox>
-                <Checkbox label="睡觉"></Checkbox>
-                <Checkbox label="跑步"></Checkbox>
-                <Checkbox label="看电影"></Checkbox>
-            </Checkbox-group>
-        </Form-item> -->
+        
         <Form-item label="禁用">
             <iSwitch v-model="formItem.switch" size="large">
                 <span slot="open">开启</span>
                 <span slot="close">关闭</span>
             </iSwitch>
         </Form-item>
-        <!-- <Form-item label="滑块">
-            <Slider v-model="formItem.slider" range></Slider>
-        </Form-item>
-        <Form-item label="文本域">
-            <Input v-model="formItem.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入..."></Input>
-        </Form-item> -->
-        <Form-item>
-            <Button type="primary" @click="saveUser('formItem')">提交</Button>
-            <Button type="ghost" style="margin-left: 8px">取消</Button>
-        </Form-item>
+       
+       
     </Form>
 
             </div>
+          
+          
+          <div slot="footer">
+                 <Button type="primary" @click="saveUser('formItem')">提交</Button>
+                 <Button type="ghost" @click="closeModel" style="margin-left: 8px">取消</Button>
+          </div>
     </Modal>
      <Spin size="large"  v-if="spinShow"></Spin>
   </div>
@@ -170,8 +154,9 @@
 
    
 <script>
-import {getUserList,getRoleList,getUserById,addUser,delUserById} from 'api/user';
-import {getOrganizeList} from 'api/organize';
+import {getUserList,getRoleList,getUserById,addUser,delUserById,editUser,updateSelfPassWord,updatePassWord} from 'api/user';
+import {getOrganizeList,getDutyList,getCompanyList} from 'api/organize';
+import store from 'store';
 import Cookies from 'js-cookie';
 
     export default {
@@ -179,18 +164,35 @@ import Cookies from 'js-cookie';
             var this_i = this;
             var checkEmail = (rule,value,callback)=>{
                 if(!value){
-                    return callback(new Error('手机号不能为空'));
+                    return callback(new Error('邮箱不能为空'));
                 }else {
+                    rule.message = ""
                     const reg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
                     console.log(reg.test(value));
                     if (reg.test(value)) {
                        callback();
                     } else {
-                       return callback(new Error('请输入正确的手机号'));
+                       return callback(new Error('请输入正确的邮箱'));
                     }
               }
             }
+            var checkPassWord = (rule,value,callback)=>{
+                if(!value)
+                   return callback(new Error('密码不能为空'));
+                else {
+                   rule.message = ""; 
+                   const reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{6,16}$/
+                   if(reg.test(value))
+                     callback();
+                   else
+                     return callback(new Error('密码必须由数字和字母组成，并且长度在6-16位之间'))
+                }
+            }
             return {
+                 deptname:'请选择部门',
+                 companyname:'请选择公司',
+                 rolename:'请选择角色',
+                 title:'新增用户',
                  deptlist:[],//部门集合
                  dutylist:[],//岗位集合
                  companylist:[],//公司集合
@@ -198,19 +200,23 @@ import Cookies from 'js-cookie';
                  totalCount:0,
                  currentPage:1,//当前页码
                  isEditOrAdd:0,//新增还是编辑
-                 roles:['管理员','普通用户'],
+                 rolelist:['管理员','普通用户'],
+                 currentRole:'',//当前用户的角色名称
                  formItem: {
                     id:0,
+                    account:'',
+                    password:'',
                     email:'',
                     username: '',
                     name:'',
-                    select: '',
+                    roleid: '',
+                    phone:'',
                     role:'',
                     sex: '1',
                     checkbox: [],
                     switch: true,
-                    date: '',
-                    time: '',
+                    companyid: '',
+                    deptid: '',
                     slider: [20, 50],
                     textarea: ''
                 },
@@ -219,6 +225,13 @@ import Cookies from 'js-cookie';
                     password: ''
                 },
                 ruleInline: {
+                    account:[{
+                        required:true,message:'请填写账户',trigger:'blur'
+                    }],
+                    password:[
+                        { validator:checkPassWord,required: true, message: '请填写密码', trigger: 'blur' },
+                        { type:'string',min:6,message:'密码长度不能小于6位',trigger:'blur'}
+                    ],
                     username:[{
                         required:true,message:'请填写用户名',trigger:'blur'
                     }],
@@ -229,31 +242,6 @@ import Cookies from 'js-cookie';
                         { validator:checkEmail,required: true, message: '请填写邮箱', trigger: 'blur' },
                         { type: 'string', min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
                     ]
-                },
-                 formLeft: {
-                    input1: '',
-                    input2: '',
-                    input3: ''
-                },
-                formRight: {
-                    input1: '',
-                    input2: '',
-                    input3: ''
-                },
-                formTop: {
-                    input1: '',
-                    input2: '',
-                    input3: ''
-                },
-                formValidate: {
-                    name: '111',
-                    mail: '',
-                    city: '',
-                    gender: '',
-                    interest: [],
-                    date: '',
-                    time: '',
-                    desc: ''
                 },
                 ruleValidate: {
                     name: [
@@ -389,15 +377,14 @@ import Cookies from 'js-cookie';
                     {
                         title:'公司',
                         render:(h,params)=>{
-                            return h('div',[h('strong',params.row.sex)])
+                            return h('div',[h('strong',this_i.companylist[params.row.F_OrganizeId].F_FullName)])
                         },
                     },
                      {
                         title: '部门',
                          render: (h, params) => {
-                             
                              return h('div', [
-                                 h('strong', params.row.name)
+                                 h('strong', this_i.deptlist[params.row.F_DepartmentId].F_FullName)
                                ]);
                         },
                        
@@ -405,8 +392,6 @@ import Cookies from 'js-cookie';
                      {
                         title: '岗位',
                          render: (h, params) => {
-                             console.log(params.row.name)
-                             console.log(this_i.dutylist)
                              return h('div', [
                                  h('strong', this_i.dutylist[params.row.F_RoleId].F_FullName)
                                ]);
@@ -418,7 +403,7 @@ import Cookies from 'js-cookie';
                          render: (h, params) => {
                              
                              return h('div', [
-                                 h('strong', params.row.name)
+                                 h('strong', params.row.F_CreatorTime)
                                ]);
                         },
                        
@@ -426,10 +411,18 @@ import Cookies from 'js-cookie';
                      {
                         title: '允许登录',
                          render: (h, params) => {
-                             
-                             return h('div', [
-                                 h('strong', params.row.name)
-                               ]);
+                             if(params.row.F_EnabledMark)
+                                return h('div',{
+                                     domProps: {
+                                        innerHTML: '<span data-v-55c71c4a="" tabindex="0" class="ivu-switch ivu-switch-checked ivu-switch-large"><input type="hidden" value="true"> <span class="ivu-switch-inner"><span data-v-55c71c4a="">开启</span> <!----></span></span>'
+                                     },
+                                });
+                            else
+                               return h('div',{
+                                   domProps:{
+                                       innerHTML:'<span data-v-55c71c4a="" tabindex="0" class="ivu-switch ivu-switch-large"><input type="hidden" value="false"> <span class="ivu-switch-inner"><!----> <span data-v-55c71c4a="">关闭</span></span></span>'
+                                   }
+                               })
                         },
                        
                     }, 
@@ -438,7 +431,7 @@ import Cookies from 'js-cookie';
                          render: (h, params) => {
                              
                              return h('div', [
-                                 h('strong', params.row.name)
+                                 h('strong', params.row.F_Description)
                                ]);
                         },
                        
@@ -458,11 +451,12 @@ import Cookies from 'js-cookie';
                                     },
                                     on: {
                                         click: () => {
+                                              this_i.isEditOrAdd = 0;
                                               //根据Id获取对应的人员详细信息
-                                              this_i.readPersonInformation(params.row.id);
+                                              this_i.readPersonInformation(params.row.F_Id);
                                         }
                                     }
-                                }, '查看'),
+                                }, '编辑'),
                                 h('Button', {
                                     props: {
                                         type: 'error',
@@ -486,19 +480,27 @@ import Cookies from 'js-cookie';
             }
         },
         created(){
-            //获取用户列表
-            getUserList(1,10).then(response=>{
-                this.spinShow = false;
-                var jsonData = response.data.Items;
-                this.setPersonInformation(jsonData,response.data.Count)
-                //获取部门集合
-               
-                //获取岗位集合
-                getOrganizeList().then(response=>{
+           this.currentRole = store.getters.roles
+             //获取部门集合
+            getOrganizeList().then(response=>{
+                this.deptlist = response.data
+                 //获取岗位集合
+                getDutyList().then(response=>{
                     this.dutylist= response.data;
+                  //获取公司集合
+                  getCompanyList().then(response=>{
+                     this.companylist = response.data;
+                      //获取用户列表
+                    getUserList(1,10).then(response=>{
+                      this.spinShow = false;
+                      var jsonData = response.data.Items;
+                      this.setPersonInformation(jsonData,response.data.Count)
+               
+                       // alert(this.video_result)
+                    });
+                  })
                 })
-               // alert(this.video_result)
-            });
+            })
         },
         mounted(){
             const vue=this;
@@ -506,6 +508,26 @@ import Cookies from 'js-cookie';
             let video_list=null;
         },
         methods:{
+          //选择角色
+          chooseRole(name){
+             this.formItem.select = name
+             this.formItem.roleid = name                                                                                                                                                                                               
+             //循环角色列表
+             for(var i=0;i<this.rolelist.length;i++){
+                 if(this.rolelist[i].F_Id==name)
+                  this.rolename = this.rolelist[i].F_FullName
+             }
+          },
+          //选择公司
+          chooseCompany(name){
+             this.formItem.companyid = name
+             this.companyname = this.companylist[name].F_FullName
+          },
+          //选择部门
+          chooseDept(name){
+             this.formItem.deptid = name
+             this.deptname = this.deptlist[name].F_FullName
+          },
           ok () {
             	this.modal1 = false,
                 this.$Message.info('点击了确定');
@@ -521,22 +543,33 @@ import Cookies from 'js-cookie';
           },
           //读取用户信息
           readPersonInformation(id){
+              //每次读取的时候 先初始化下下拉框
+              this.companyname='请选择公司'
+              this.rolename='请选择角色'
+              this.deptname ='请选择部门'
               this.isEditOrAdd = 0;
               this.modal1 = true;
-               getRoleList().then(response=>{
+              getRoleList().then(response=>{
                   var jsonData = response.data;
                   if(jsonData!=null&&jsonData!=undefined){
-                      this.roles = jsonData;
+                      this.rolelist = jsonData;
                   }
               })
               getUserById(id).then(response=>{
                     var jsonData = response.data;
                     if(jsonData!=null&&jsonData!=""){
-                       this.formItem.name = jsonData.Name;
-                       this.formItem.username = jsonData.UserName;
-                       this.formItem.email = jsonData.Email; 
-                       this.formItem.switch=jsonData.Enable==0?false:true;
-                       this.formItem.sex = String(jsonData.Sex);
+                       this.formItem.id = jsonData.Id
+                       this.formItem.name = jsonData.F_RealName;
+                       this.formItem.username = jsonData.F_NickName;
+                       this.formItem.email = jsonData.F_Email; 
+                       this.formItem.phone = jsonData.F_MobilePhone
+                       this.formItem.switch=jsonData.F_EnabledMark==true?false:true;
+                       this.formItem.sex = jsonData.F_Gender==true?'0':'1';
+                       this.formItem.account = jsonData.F_Account;
+                       this.formItem.password = jsonData.F_UserPassword;
+                       this.chooseCompany(jsonData.F_OrganizeId)
+                       this.chooseDept(jsonData.F_DepartmentId)
+                       this.chooseRole(jsonData.F_RoleId)
                     }
                 })
           },
@@ -561,20 +594,28 @@ import Cookies from 'js-cookie';
                       this.$Message.error("删除失败！");
               })
           },
+          closeModel(){
+              this.modal1 = false
+          },
           //保存用户
           saveUser(name){
               this.$refs[name].validate((valid) => {
                 if (valid) {
-                    var Email = this.formItem.email;
-                    var Enable = this.formItem.switch==true?1:0
-                    var Sex = this.formItem.sex;
-                    var UserName = this.formItem.username;
-                    var RoleId = this.formItem.role;
-                    var Name = this.formItem.name;
+                    var F_Email = this.formItem.email;
+                    var F_EnabledMark = this.formItem.switch==true?0:1
+                    var F_MobilePhone = this.formItem.phone
+                    var F_Gender = this.formItem.sex=="0"?true:false;
+                    var F_NickName = this.formItem.username;
+                    var F_RoleId = this.formItem.roleid;
+                    var F_RealName = this.formItem.name;
+                    var F_OrganizeId = this.formItem.companyid
+                    var F_DepartmentId = this.formItem.deptid
+                    var F_Account = this.formItem.account
+                    var F_UserPassword = this.formItem.password
                     if(this.isEditOrAdd==1)//新增
-                      addUser(Email,Enable,Sex,UserName,RoleId,Name).then(response=>{
-                        var result = response.data;
-                        if(result=="ok"){
+                      addUser(F_Email,F_EnabledMark,F_Gender,F_NickName,F_RoleId,F_RealName,F_UserPassword,F_OrganizeId,F_DepartmentId,F_Account,F_MobilePhone).then(response=>{
+                        var result = response.StatusCode;
+                        if(result==200){
                            this.$Message.success("保存成功！");
                            this.modal1 = false;
                            //重新获取数据
@@ -583,7 +624,25 @@ import Cookies from 'js-cookie';
                            this.$Message.error("保存失败！");
                        })
                     else {//编辑
-
+                       var F_UserId = this.formItem.id
+                       editUser(F_Email,F_EnabledMark,F_Gender,F_NickName,F_RoleId,F_RealName,F_UserPassword,F_OrganizeId,F_DepartmentId,F_Account,F_UserId,F_MobilePhone).then(response=>{
+                          if(response.data=="ok"){
+                              //如果是超级管理员 可以对密码进行修改
+                              if(this.currentRole=="超级管理员"){
+                                  updatePassWord(F_UserId,F_UserPassword).then(response=>{
+                                      if(response.data=="ok"){
+                                          this.$Message.success("保存成功！");
+                                      }else
+                                          this.$Message.fail("保存失败！");
+                                  })
+                              }else
+                                  this.$Message.success("保存成功！");
+                              this.modal1 = false;
+                              //重新获取数据
+                              this.setInitPage(this.currentPage)
+                          }else
+                              this.$Message.error("保存失败！");
+                       })
                     }
                        
                 } else {

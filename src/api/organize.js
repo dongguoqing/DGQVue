@@ -17,3 +17,12 @@ export function getDutyList(){
         params:{}
     })
 }
+
+//获取公司集合
+export function getCompanyList(){
+    return fetch({
+        url:"/LoginService/Organize/GetCompanyList",
+        method:"get",
+        params:{}
+    })
+}
