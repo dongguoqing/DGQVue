@@ -154,7 +154,7 @@
 
    
 <script>
-import {getUserList,getRoleList,getUserById,addUser,delUserById,editUser,updateSelfPassWord,updatePassWord} from 'api/user';
+import {getUserList,getRoleList,getUserById,addUser,delUserById,editUser,updateSelfPassWord,updatePassWord,addUserPassWord} from 'api/user';
 import {getOrganizeList,getDutyList,getCompanyList} from 'api/organize';
 import store from 'store';
 import Cookies from 'js-cookie';
@@ -577,10 +577,29 @@ import Cookies from 'js-cookie';
           addUser(){
               this.isEditOrAdd = 1;
               this.modal1 = true
+              //清空
+              this.formItem = {
+                    id:0,
+                    account:'',
+                    password:'',
+                    email:'',
+                    username: '',
+                    name:'',
+                    roleid: '',
+                    phone:'',
+                    role:'',
+                    sex: '1',
+                    checkbox: [],
+                    switch: true,
+                    companyid: '',
+                    deptid: '',
+                    slider: [20, 50],
+                    textarea: ''
+              },
               getRoleList().then(response=>{
                   var jsonData = response.data;
                   if(jsonData!=null&&jsonData!=undefined){
-                      this.roles = jsonData;
+                       this.rolelist = jsonData;
                   }
               })
           },
@@ -614,9 +633,17 @@ import Cookies from 'js-cookie';
                     var F_UserPassword = this.formItem.password
                     if(this.isEditOrAdd==1)//新增
                       addUser(F_Email,F_EnabledMark,F_Gender,F_NickName,F_RoleId,F_RealName,F_UserPassword,F_OrganizeId,F_DepartmentId,F_Account,F_MobilePhone).then(response=>{
-                        var result = response.StatusCode;
-                        if(result==200){
-                           this.$Message.success("保存成功！");
+                        if(response.status==200){
+                            //保存密码
+                           var responseUser = response.data
+                           debugger
+                           addUserPassWord(responseUser.F_Id,responseUser.F_Id,F_UserPassword).then(response=>{
+                               if(response.status==200){
+                                  this.$Message.success("保存成功！");
+                               }else{
+                                  this.$Message.error("保存失败！");
+                               }
+                           })
                            this.modal1 = false;
                            //重新获取数据
                            this.setInitPage(this.currentPage)
